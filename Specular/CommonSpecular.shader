@@ -25,6 +25,7 @@ Shader "MyShader/Specular"
 				#include "UnityCG.cginc"
 				#include "AutoLight.cginc"
 
+
 				fixed4 _Color;
 				sampler2D _MainMap;
 				sampler2D _NormalMap;
@@ -74,9 +75,8 @@ Shader "MyShader/Specular"
 					fixed3 TangentNormal = UnpackNormal(tex2D(_NormalMap, i.uv));
 
 					fixed3 albedo = tex2D(_MainMap, i.uv).rgb*_Color.rgb;
-					fixed3 ambient = albedo.rgb*UNITY_LIGHTMODEL_AMBIENT.xyz;
-					fixed halfLambert = (0.5*dot(TangentNormal, i.TangentLightDir) + 0.5);
-					fixed3 diffuse = tex2D(_RampMap, fixed2(halfLambert, halfLambert))*_LightColor0*albedo;
+					fixed3 ambient = albedo*UNITY_LIGHTMODEL_AMBIENT;
+					fixed3 diffuse = _LightColor0.rgb*albedo.rgb*(0.5*dot(TangentNormal, i.TangentLightDir) + 0.5);
 					fixed3 TangentHalfDir = normalize(i.TangentViewDir + i.TangentLightDir);
 					fixed3 specular = _LightColor0.rgb*_Specular.rgb
 						*pow(max(0, dot(TangentNormal,TangentHalfDir)),_Gloss);
